@@ -9,11 +9,11 @@
       "lint": "next lint",
       "format": "prettier --write .",
       "prepare": "husky install",
-      "dev:server": "tsx watch server/src/index.ts",
+      "dev:server": "tsx src/index.ts",
       "start:server": "tsx server/src/index.ts",
       "db:push": "drizzle-kit push --config server/drizzle.config.ts",
       "db:migrate": "drizzle-kit migrate --config server/drizzle.config.ts",
-      "db:seed": "tsx server/scripts/seed.ts"
+      "db:seed": "tsx server/scripts/seed.ts",
       "migrate": "drizzle-kit migrate",
       "seed": "tsx server/src/seed.ts"
    },
@@ -65,9 +65,8 @@
       "uuid": "^11.1.0",
       "zod": "^3.24.2",
       "zustand": "^5.0.3",
-      "better-sqlite3": "^9.4.1",
-      "drizzle-orm": "^0.36.0",
-      "fastify": "^5.1.0"
+      "@fastify/cors": "^10.0.0",
+      "dotenv": "^16.4.5"
    },
    "devDependencies": {
       "@eslint/eslintrc": "^3",
