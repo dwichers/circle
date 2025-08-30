@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import { env } from './config/env';
 import { setupWebsocket } from './ws';
 import { createTask, updateTask, completeTask } from './services/tasks';
+import { suggestNext } from './domain/suggest';
 
 const app = Fastify({ logger: true });
 
@@ -27,6 +28,25 @@ app.post('/tasks/:id/complete', async (request, reply) => {
    const { id } = request.params as { id: string };
    const task = await completeTask(Number(id));
    reply.send(task);
+});
+
+app.get('/suggest', async (request, reply) => {
+   const {
+      mode = 'auto',
+      limit = '5',
+      context,
+      person,
+      energy,
+   } = request.query as Record<string, string>;
+
+   const suggestions = await suggestNext({
+      mode: mode as any,
+      context,
+      person,
+      energy: energy ? Number(energy) : undefined,
+   });
+
+   reply.send(suggestions.slice(0, Number(limit)));
 });
 
 const start = async () => {
