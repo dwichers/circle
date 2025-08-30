@@ -36,6 +36,43 @@ pnpm install
 pnpm dev
 ```
 
+### WebSocket broadcast test
+
+Start the API server:
+
+```bash
+pnpm dev:server
+```
+
+In another terminal, open a WebSocket connection:
+
+```bash
+npx wscat -c ws://localhost:3000
+```
+
+Use `curl` to mutate tasks and observe the broadcast:
+
+```bash
+# Create a task
+curl -X POST http://localhost:3000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test task"}'
+
+# Update a task
+curl -X PUT http://localhost:3000/tasks/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Renamed"}'
+
+# Complete a task
+curl -X POST http://localhost:3000/tasks/1/complete
+```
+
+Each call broadcasts a message like:
+
+```json
+{"event":"tasks.updated","payload":{"type":"create","task":{...}}}
+```
+
 ## Star History
 
 <a href="https://www.star-history.com/#ln-dev7/circle&Date">
