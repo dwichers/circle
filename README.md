@@ -73,6 +73,27 @@ Each call broadcasts a message like:
 {"event":"tasks.updated","payload":{"type":"create","task":{...}}}
 ```
 
+### MCP server
+
+Run the MCP server:
+
+```bash
+pnpm dev:mcp
+```
+
+Register it in your LLM tool configuration:
+
+```json
+{
+   "mcpServers": {
+      "circle": {
+         "command": "pnpm",
+         "args": ["dev:mcp"]
+      }
+   }
+}
+```
+
 ## Star History
 
 <a href="https://www.star-history.com/#ln-dev7/circle&Date">
