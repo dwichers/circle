@@ -1,6 +1,6 @@
 import { db } from '../db/drizzle';
 import { tasks } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, like } from 'drizzle-orm';
 import { broadcast } from '../ws';
 
 export type NewTask = typeof tasks.$inferInsert;
@@ -27,4 +27,35 @@ export async function completeTask(id: number) {
       .returning();
    broadcast({ event: 'tasks.updated', payload: { type: 'complete', task } });
    return task;
+}
+
+export async function listTasks(opts: {
+   q?: string;
+   status?: string;
+   projectId?: string;
+   limit?: number;
+   offset?: number;
+}) {
+   let query = db.select().from(tasks);
+   const where = [] as any[];
+   if (opts.q) {
+      where.push(like(tasks.title, `%${opts.q}%`));
+   }
+   if (opts.status) {
+      where.push(eq(tasks.status, opts.status));
+   }
+   if (opts.projectId) {
+      where.push(eq(tasks.projectId, opts.projectId));
+   }
+   if (where.length) {
+      query = query.where(and(...where));
+   }
+   if (typeof opts.limit === 'number') {
+      query = query.limit(opts.limit);
+   }
+   if (typeof opts.offset === 'number') {
+      query = query.offset(opts.offset);
+   }
+   const rows = await query;
+   return rows;
 }
